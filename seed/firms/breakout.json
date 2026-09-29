@@ -1,0 +1,86 @@
+{
+  "name": "Breakout (Kraken)",
+  "official_url": "https://www.breakoutprop.com",
+  "proposed_status": "INSUFFICIENT_DATA",
+  "status_reason": "Program-rules page returned 403; only search snippets. Regional restrictions exist but list not obtained.",
+  "jurisdiction": {
+    "prohibited_countries": [],
+    "ukraine_citizens": "UNKNOWN",
+    "ukraine_residents": "UNKNOWN",
+    "restriction_basis": "unknown",
+    "notes": "Snippet: regional restrictions apply; list not retrieved.",
+    "evidence": [
+      "s1"
+    ]
+  },
+  "kyc": {
+    "required_before": "unknown",
+    "documents": [],
+    "notes": "Not confirmed.",
+    "evidence": []
+  },
+  "payout": {
+    "classification": "UNKNOWN",
+    "methods": [
+      {
+        "rail": "crypto_wallet",
+        "provider": null,
+        "currencies": [
+          "USDC"
+        ],
+        "networks": [
+          "ERC20"
+        ],
+        "min_amount": 50,
+        "max_amount": null,
+        "fee": null,
+        "processing_time": "on-demand, mostly within hours (claimed)",
+        "kyc_required": null,
+        "evidence": [
+          "s1"
+        ]
+      }
+    ],
+    "frequency": "on-demand",
+    "profit_split_pct": null,
+    "evidence": [
+      "s1"
+    ]
+  },
+  "platforms": [
+    "proprietary"
+  ],
+  "automation": {
+    "ea_bots": "UNKNOWN",
+    "api_trading": "UNKNOWN",
+    "copy_trading": "UNKNOWN",
+    "vps_vpn": "UNKNOWN",
+    "hft": "UNKNOWN",
+    "conditions": "",
+    "evidence": []
+  },
+  "programs": [],
+  "sources": [
+    {
+      "id": "s1",
+      "url": "https://www.breakoutprop.com/",
+      "title": "Breakout site (search-result snippet)",
+      "doc_type": "MARKETING",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "minimum payout is $50 after profit split, sent as USDC on Ethereum ... regional restrictions apply"
+    }
+  ],
+  "risk_signals": [],
+  "unknowns": [
+    "Restricted countries",
+    "All rules",
+    "KYC",
+    "Direct vs provider",
+    "Automation policy",
+    "Acquired by Kraken - terms may change",
+    "Access blocked (403)"
+  ],
+  "slug": "breakout",
+  "researched_at": "2026-09-29",
+  "conflicts": []
+}

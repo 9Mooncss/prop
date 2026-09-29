@@ -1,0 +1,377 @@
+{
+  "name": "FTMO",
+  "official_url": "https://ftmo.com",
+  "proposed_status": "WATCHLIST",
+  "status_reason": "Ukraine (country) not prohibited, only occupied regions; direct crypto payout listed in official FAQ. Not VERIFIED: General T&C PDF, KYC policy, refund text, EA/VPS detail and platform rules not fully read from primary sources.",
+  "jurisdiction": {
+    "prohibited_countries": [
+      "AF",
+      "AI",
+      "AQ",
+      "AG",
+      "BY",
+      "BZ",
+      "BT",
+      "BV",
+      "BI",
+      "CV",
+      "CF",
+      "TD",
+      "CK",
+      "KM",
+      "CG",
+      "CU",
+      "DJ",
+      "DM",
+      "GQ",
+      "ER",
+      "SZ",
+      "FJ",
+      "GA",
+      "GM",
+      "GD",
+      "GN",
+      "GW",
+      "VA",
+      "ID",
+      "IQ",
+      "KZ",
+      "KI",
+      "XK",
+      "KG",
+      "LS",
+      "LR",
+      "MW",
+      "ML",
+      "MR",
+      "MH",
+      "FM",
+      "NR",
+      "NE",
+      "NU",
+      "PG",
+      "RU",
+      "BL",
+      "KN",
+      "LC",
+      "VC",
+      "WS",
+      "SM",
+      "ST",
+      "SC",
+      "SL",
+      "SB",
+      "SO",
+      "SS",
+      "SD",
+      "SR",
+      "TJ",
+      "TL",
+      "TK",
+      "TO",
+      "TM",
+      "TV",
+      "UZ",
+      "VU",
+      "VE",
+      "EH",
+      "IR",
+      "SY",
+      "MM",
+      "KP"
+    ],
+    "ukraine_citizens": "ALLOWED",
+    "ukraine_residents": "ALLOWED",
+    "restriction_basis": "unknown",
+    "notes": "Ukraine listed only with regional restriction: Crimea, Sevastopol, Donetsk, Kherson, Luhansk, Zaporizhzhia. Owner is a citizen; if residing in those regions it would be restricted. Iran/Syria/Myanmar/North Korea: both nationals and residents excluded (EEA exception). Whether restriction is by residence or citizenship for the general list not stated in the fetched text.",
+    "evidence": [
+      "s1"
+    ]
+  },
+  "kyc": {
+    "required_before": "unknown",
+    "documents": [],
+    "notes": "KYC policy page not read.",
+    "evidence": []
+  },
+  "payout": {
+    "classification": "DIRECT_CRYPTO",
+    "methods": [
+      {
+        "rail": "crypto_wallet",
+        "provider": null,
+        "currencies": [
+          "USDT",
+          "USDC",
+          "BTC",
+          "ETH",
+          "LTC"
+        ],
+        "networks": [
+          "TRC20",
+          "ERC20"
+        ],
+        "min_amount": 50,
+        "max_amount": null,
+        "fee": "no additional commissions by FTMO (network fees may apply)",
+        "processing_time": "approval 1-2 business days, payout 1-2 business days after invoice approval",
+        "kyc_required": null,
+        "evidence": [
+          "s2",
+          "s3"
+        ]
+      },
+      {
+        "rail": "bank",
+        "provider": null,
+        "currencies": [
+          "USD",
+          "EUR"
+        ],
+        "networks": [],
+        "min_amount": 20,
+        "max_amount": null,
+        "fee": null,
+        "processing_time": null,
+        "kyc_required": null,
+        "evidence": [
+          "s2"
+        ]
+      }
+    ],
+    "frequency": "on request from day 14 after first trade, then on any following request (see FAQ)",
+    "profit_split_pct": 80,
+    "evidence": [
+      "s2"
+    ]
+  },
+  "platforms": [
+    "MT4",
+    "MT5",
+    "cTrader",
+    "TradingView"
+  ],
+  "automation": {
+    "ea_bots": "CONDITIONAL",
+    "api_trading": "UNKNOWN",
+    "copy_trading": "CONDITIONAL",
+    "vps_vpn": "UNKNOWN",
+    "hft": "CONDITIONAL",
+    "conditions": "EAs allowed but hyperactivity (>2000 server requests/day) forbidden; no third-party access to account; trading around major news restricted on funded stage per forbidden practices page (verify exact scope). VPN/VPS: FAQ question exists, answer not read.",
+    "evidence": [
+      "s4"
+    ]
+  },
+  "programs": [
+    {
+      "slug": "two-step-100k",
+      "name": "FTMO Challenge (2-Step)",
+      "platforms": [
+        "MT4",
+        "MT5",
+        "cTrader",
+        "TradingView"
+      ],
+      "account_sizes": [
+        {
+          "size": 100000,
+          "price_usd": null,
+          "currency": "USD"
+        }
+      ],
+      "refund": "unknown",
+      "phases": [
+        {
+          "name": "phase1",
+          "rules": [
+            {
+              "type": "profit_target",
+              "params": {
+                "pct": 10
+              },
+              "text": "Challenge phase 10%",
+              "evidence": [
+                "s5"
+              ]
+            },
+            {
+              "type": "daily_loss_limit",
+              "params": {
+                "pct": 5,
+                "basis": "initial_capital_based_floor_from_start_of_day_balance",
+                "includes_floating": null,
+                "reset_time": "00:00",
+                "reset_tz": "Europe/Prague"
+              },
+              "text": "Maximum Daily Loss 5% of the Initial Simulated Capital; recalculated daily at 00:00 CE(S)T",
+              "evidence": [
+                "s5"
+              ]
+            },
+            {
+              "type": "max_loss",
+              "params": {
+                "pct": 10,
+                "mode": "static",
+                "basis": "balance_or_equity_unconfirmed"
+              },
+              "text": "Maximum Loss 10% of Initial Simulated Capital, static floor",
+              "evidence": [
+                "s5"
+              ]
+            },
+            {
+              "type": "min_trading_days",
+              "params": {
+                "days": 4
+              },
+              "text": "at least 4 Trading Days",
+              "evidence": [
+                "s5"
+              ]
+            },
+            {
+              "type": "max_duration",
+              "params": {
+                "days": null
+              },
+              "text": "No time limit advertised on FAQ page",
+              "evidence": [
+                "s6"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "phase2",
+          "rules": [
+            {
+              "type": "profit_target",
+              "params": {
+                "pct": 5
+              },
+              "text": "Verification phase 5%",
+              "evidence": [
+                "s5"
+              ]
+            },
+            {
+              "type": "daily_loss_limit",
+              "params": {
+                "pct": 5,
+                "reset_time": "00:00",
+                "reset_tz": "Europe/Prague"
+              },
+              "text": "same as phase1",
+              "evidence": [
+                "s5"
+              ]
+            },
+            {
+              "type": "max_loss",
+              "params": {
+                "pct": 10,
+                "mode": "static"
+              },
+              "text": "same as phase1",
+              "evidence": [
+                "s5"
+              ]
+            },
+            {
+              "type": "min_trading_days",
+              "params": {
+                "days": 4
+              },
+              "text": "at least 4 Trading Days",
+              "evidence": [
+                "s5"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "funded",
+          "rules": [
+            {
+              "type": "profit_split",
+              "params": {
+                "pct": 80,
+                "note": "90% with Scaling Plan or Premium; 1-Step is 90%"
+              },
+              "text": "2-Step: 80% (increases to 90% with Scaling Plan or Premium Programme)",
+              "evidence": [
+                "s2"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "url": "https://ftmo.com/en/faq/who-can-join-ftmo/",
+      "title": "Who can join FTMO?",
+      "doc_type": "RESTRICTED_COUNTRIES",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "Ukraine (restrictions are limited to the following regions: Crimea, Sevastopol, Donetsk, Kherson, Luhansk, and Zaporizhzhia)"
+    },
+    {
+      "id": "s2",
+      "url": "https://ftmo.com/en/faq/how-do-i-withdraw-my-profits/",
+      "title": "How do I withdraw my reward?",
+      "doc_type": "PAYOUT_POLICY",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "Rewards can be paid out via bank wire transfer, instant transfer through Visa Direct / Mastercard Send (up to $20,000), Skrill (up to $3,000), or cryptocurrencies."
+    },
+    {
+      "id": "s3",
+      "url": "https://ftmo.com/en/faq/how-do-i-withdraw-my-profits/",
+      "title": "Crypto coins/networks (from search-result snippet of FTMO FAQ; coin list not confirmed by page fetch)",
+      "doc_type": "PAYOUT_POLICY",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "Bitcoin (BTC), Ethereum (ETH), Litecoin (LTC), USD Coin (USDC on ERC20 Network) and Tether (USDT on TRC20 Network)... minimum ... $50 for cryptocurrency withdrawals"
+    },
+    {
+      "id": "s4",
+      "url": "https://ftmo.com/en/forbidden-trading-practices/",
+      "title": "Forbidden Trading Practices",
+      "doc_type": "TRADING_RULES",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "automated robots / EAs (Expert Advisors) which cause the trading account to become hyperactive in the sense of an excessive number of more than 2,000 server requests per day"
+    },
+    {
+      "id": "s5",
+      "url": "https://ftmo.com/en/trading-objectives/",
+      "title": "Trading Objectives",
+      "doc_type": "TRADING_RULES",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "2-Step: profit target 10% / 5%; Maximum Daily Loss 5%; Maximum Loss 10%; at least 4 Trading Days; recalculated daily at 00:00 CE(S)T"
+    },
+    {
+      "id": "s6",
+      "url": "https://ftmo.com/en/faq/",
+      "title": "FAQ",
+      "doc_type": "FAQ",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "Up to $200,000 account ... No time limit"
+    }
+  ],
+  "risk_signals": [],
+  "unknowns": [
+    "General Terms and Conditions PDF (cdn.ftmo.com) not read",
+    "KYC policy/timing and documents",
+    "Refund of entry fee (FAQ answer not read)",
+    "Whether floating PnL counts in daily loss and whether max loss is equity-based (not stated in fetched summary)",
+    "VPN/VPS and API policy",
+    "Whether crypto payout is direct or via a processor (FAQ names none)",
+    "Weekend/overnight and exact news rules per account type",
+    "Account prices",
+    "Payout crypto list from search snippet only"
+  ],
+  "slug": "ftmo",
+  "researched_at": "2026-09-29",
+  "conflicts": []
+}

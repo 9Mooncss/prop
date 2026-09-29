@@ -1,0 +1,311 @@
+{
+  "name": "The5ers",
+  "official_url": "https://the5ers.com",
+  "proposed_status": "WATCHLIST",
+  "status_reason": "Ukraine country not in restricted list (only Donetsk, Kherson, Luhansk, Zaporizhzhia, Crimea). Crypto payout option listed separately from Rise. Many rule items (platforms, min days, EA detail, KYC) not confirmed.",
+  "jurisdiction": {
+    "prohibited_countries": [
+      "AF",
+      "BY",
+      "BA",
+      "BI",
+      "CF",
+      "CU",
+      "CG",
+      "CD",
+      "ER",
+      "GN",
+      "GW",
+      "IQ",
+      "IR",
+      "IL",
+      "LA",
+      "LB",
+      "LR",
+      "LY",
+      "MM",
+      "KP",
+      "PS",
+      "PG",
+      "RU",
+      "SS",
+      "SD",
+      "SO",
+      "SY",
+      "VU",
+      "VE",
+      "YE"
+    ],
+    "ukraine_citizens": "ALLOWED",
+    "ukraine_residents": "ALLOWED",
+    "restriction_basis": "residence",
+    "notes": "FAQ version lists Crimea, Donetsk, Kherson, Luhansk, Zaporizhzhia; disclaimer version lists only Crimea and omits Bosnia. The lists differ between FAQ and disclaimer. Terms say users declare they do not reside in a prohibited jurisdiction; list varies over time.",
+    "evidence": [
+      "s1"
+    ]
+  },
+  "kyc": {
+    "required_before": "unknown",
+    "documents": [],
+    "notes": "Not confirmed.",
+    "evidence": []
+  },
+  "payout": {
+    "classification": "DIRECT_CRYPTO",
+    "methods": [
+      {
+        "rail": "crypto_wallet",
+        "provider": null,
+        "currencies": [
+          "USDT",
+          "USDC",
+          "ETH",
+          "LTC"
+        ],
+        "networks": [
+          "TRC20",
+          "ERC20"
+        ],
+        "min_amount": 150,
+        "max_amount": 1500,
+        "fee": "3.5% commission",
+        "processing_time": "up to 3 business days",
+        "kyc_required": null,
+        "evidence": [
+          "s2",
+          "s3"
+        ]
+      },
+      {
+        "rail": "rise",
+        "provider": "Rise",
+        "currencies": [],
+        "networks": [],
+        "min_amount": null,
+        "max_amount": null,
+        "fee": "3.5%",
+        "processing_time": "up to 3 business days",
+        "kyc_required": null,
+        "evidence": [
+          "s2"
+        ]
+      },
+      {
+        "rail": "bank",
+        "provider": null,
+        "currencies": [],
+        "networks": [],
+        "min_amount": null,
+        "max_amount": null,
+        "fee": "3.5%",
+        "processing_time": "up to 3 business days",
+        "kyc_required": null,
+        "evidence": [
+          "s2"
+        ]
+      }
+    ],
+    "frequency": "biweekly (every 2 weeks; first 14 days after funded activation)",
+    "profit_split_pct": 80,
+    "evidence": [
+      "s2",
+      "s3"
+    ]
+  },
+  "platforms": [],
+  "automation": {
+    "ea_bots": "CONDITIONAL",
+    "api_trading": "UNKNOWN",
+    "copy_trading": "PROHIBITED",
+    "vps_vpn": "UNKNOWN",
+    "hft": "PROHIBITED",
+    "conditions": "EA only if trader owns source code and no excessive server requests; copy trading/trade coordination prohibited; HFT (trades lasting seconds) prohibited; news bracketing prohibited.",
+    "evidence": [
+      "s4"
+    ]
+  },
+  "programs": [
+    {
+      "slug": "high-stakes-2step",
+      "name": "High Stakes (2-Step)",
+      "platforms": [],
+      "account_sizes": [],
+      "refund": "unknown",
+      "phases": [
+        {
+          "name": "phase1",
+          "rules": [
+            {
+              "type": "profit_target",
+              "params": {
+                "pct": 8
+              },
+              "text": "Classic: Phase 1 profit target is 8% (New variant: 10%)",
+              "evidence": [
+                "s5"
+              ]
+            },
+            {
+              "type": "daily_loss_limit",
+              "params": {
+                "pct": 3,
+                "basis": "previous_day_closing_balance_or_equity_whichever_higher",
+                "includes_floating": null,
+                "reset_time": null,
+                "reset_tz": null
+              },
+              "text": "3% of the previous day's closing balance or equity balance, whichever is higher",
+              "evidence": [
+                "s5"
+              ]
+            },
+            {
+              "type": "max_loss",
+              "params": {
+                "pct": 10,
+                "mode": "static",
+                "basis": "initial_balance"
+              },
+              "text": "10% of your initial balance",
+              "evidence": [
+                "s5"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "phase2",
+          "rules": [
+            {
+              "type": "profit_target",
+              "params": {
+                "pct": 5
+              },
+              "text": "Phase 2 is 5%",
+              "evidence": [
+                "s5"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "funded",
+          "rules": [
+            {
+              "type": "consistency_rule",
+              "params": {
+                "pct": 50
+              },
+              "text": "50% consistency requirement on funded account",
+              "evidence": [
+                "s5"
+              ]
+            },
+            {
+              "type": "payout_eligibility",
+              "params": {
+                "min_profit_usd": 250,
+                "cap_usd": 2000
+              },
+              "text": "minimum profit $250; payout cap $2000 per payout cycle (2-step plan page)",
+              "evidence": [
+                "s5"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "url": "https://the5ers.com/faqs/who-can-join-the5ers/",
+      "title": "Who can join The5ers?",
+      "doc_type": "RESTRICTED_COUNTRIES",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "Afghanistan, Belarus, Bosnia and Herzegovina, Burundi, ... Crimea, ... Donetsk, ... Kherson, ... Luhansk, ... Zaporizhzhia."
+    },
+    {
+      "id": "s2",
+      "url": "https://the5ers.com/faqs/withdrawals-everything-you-need-to-know/",
+      "title": "Withdrawals: Everything You Need to Know",
+      "doc_type": "PAYOUT_POLICY",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "Commission: 3.5% per withdrawal ... Subsequent withdrawal requests can be made every 2 weeks from your last approved withdrawal."
+    },
+    {
+      "id": "s3",
+      "url": "https://the5ers.com/faqs/what-payout-methods-are-available/",
+      "title": "What Payout Methods are Available? (search-result snippet; not directly fetched)",
+      "doc_type": "PAYOUT_POLICY",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "Rise; Crypto (wallet address, $1,500 limit per withdrawal): USDT (TRC20), USDC (ERC20), ETH, LTC; Bank Transfers"
+    },
+    {
+      "id": "s4",
+      "url": "https://the5ers.com/faqs/prohibited-trading-practices/",
+      "title": "Prohibited Trading Practices",
+      "doc_type": "TRADING_RULES",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "Using an EA from a provider where the trader does not own the source code"
+    },
+    {
+      "id": "s5",
+      "url": "https://the5ers.com/faqs/2-step-plan-rules-specifications/",
+      "title": "2-Step Plan Rules & Specifications",
+      "doc_type": "TRADING_RULES",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "Daily Loss Limit: 3% of the previous day's closing balance or equity balance, whichever is higher; Maximum Loss 10% of your initial balance"
+    }
+  ],
+  "conflicts": [
+    {
+      "field": "prohibited_countries",
+      "values": [
+        "FAQ list includes Bosnia and Herzegovina, Donetsk, Kherson, Luhansk, Zaporizhzhia",
+        "disclaimer list omits these"
+      ],
+      "sources": [
+        "s1"
+      ],
+      "notes": "Two lists on the same official page differ; Ukraine country itself absent from both."
+    },
+    {
+      "field": "phase1.profit_target.pct",
+      "values": [
+        "8 (Classic)",
+        "10 (New)"
+      ],
+      "sources": [
+        "s5"
+      ],
+      "notes": "Two variants documented on same page."
+    },
+    {
+      "field": "daily_loss_limit.pct",
+      "values": [
+        "3 (2-step rules page)",
+        "5 (search-result summary of High Stakes)"
+      ],
+      "sources": [
+        "s5"
+      ],
+      "notes": "Search summary of The5ers pages cited 5% daily loss; the fetched 2-step specs page says 3%. Not resolved."
+    }
+  ],
+  "risk_signals": [],
+  "unknowns": [
+    "Terms and Conditions not read in full",
+    "KYC timing/documents",
+    "Platforms",
+    "Min trading days, max duration, weekend/news holding",
+    "Whether crypto is sent directly or via a provider",
+    "Daily loss reset time/timezone and floating PnL",
+    "Refund",
+    "Profit split source is search snippet",
+    "Crypto page help.the5ers.com/crypto-withdrawals returned 404"
+  ],
+  "slug": "the5ers",
+  "researched_at": "2026-09-29"
+}

@@ -1,0 +1,105 @@
+{
+  "name": "E8 Markets",
+  "official_url": "https://e8markets.com",
+  "proposed_status": "EXCLUDED",
+  "status_reason": "Ukraine is listed on E8's restricted-country lists (Classic markets + Perpetuals, and Futures). Country is determined from the document provided during verification.",
+  "jurisdiction": {
+    "prohibited_countries": [
+      "UA"
+    ],
+    "ukraine_citizens": "PROHIBITED",
+    "ukraine_residents": "PROHIBITED",
+    "restriction_basis": "unknown",
+    "notes": "Only Ukraine extracted here; full list not recorded. E8 states country is determined by the verification document, not current location. Whether that is citizenship or residence document is not specified (a passport indicates citizenship; a proof-of-address indicates residence), so both marked PROHIBITED conservatively. Do not attempt to circumvent.",
+    "evidence": [
+      "s1"
+    ]
+  },
+  "kyc": {
+    "required_before": "unknown",
+    "documents": [],
+    "notes": "Country decided on verification document.",
+    "evidence": [
+      "s1"
+    ]
+  },
+  "payout": {
+    "classification": "CRYPTO_VIA_PROVIDER",
+    "methods": [
+      {
+        "rail": "rise",
+        "provider": "Rise (riseworks.io)",
+        "currencies": [
+          "USDC",
+          "USDT",
+          "BTC",
+          "ETH"
+        ],
+        "networks": [],
+        "min_amount": null,
+        "max_amount": null,
+        "fee": null,
+        "processing_time": null,
+        "kyc_required": null,
+        "evidence": [
+          "s2"
+        ]
+      }
+    ],
+    "frequency": "unknown",
+    "profit_split_pct": null,
+    "evidence": [
+      "s2"
+    ]
+  },
+  "platforms": [],
+  "automation": {
+    "ea_bots": "UNKNOWN",
+    "api_trading": "UNKNOWN",
+    "copy_trading": "UNKNOWN",
+    "vps_vpn": "UNKNOWN",
+    "hft": "UNKNOWN",
+    "conditions": "Not researched (excluded).",
+    "evidence": []
+  },
+  "programs": [],
+  "sources": [
+    {
+      "id": "s1",
+      "url": "https://intercom.help/e8/en/articles/5514278-accepted-countries",
+      "title": "Accepted countries",
+      "doc_type": "RESTRICTED_COUNTRIES",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "Ukraine listed in restricted country lists; The country is determined based on the document you provide during verification, not based on your current location."
+    },
+    {
+      "id": "s2",
+      "url": "https://help.e8markets.com/en/articles/9448411-what-are-the-payout-methods",
+      "title": "What are the payout methods? (search-result snippet)",
+      "doc_type": "PAYOUT_POLICY",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "riseworks.io (also known as Rise) using various crypto options"
+    }
+  ],
+  "conflicts": [
+    {
+      "field": "payout.classification",
+      "values": [
+        "CRYPTO_VIA_PROVIDER (Rise snippet)",
+        "other snippet says crypto wallet payments processed within 7 days"
+      ],
+      "sources": [
+        "s2"
+      ],
+      "notes": "Search snippets from E8 sources are mixed; not resolved because firm is excluded. Note s2 page returned 403."
+    }
+  ],
+  "risk_signals": [],
+  "unknowns": [
+    "Full restricted list wording (fetched via summarizer)",
+    "Whether basis is citizenship or residence",
+    "All rules and payout details"
+  ],
+  "slug": "e8-markets",
+  "researched_at": "2026-09-29"
+}

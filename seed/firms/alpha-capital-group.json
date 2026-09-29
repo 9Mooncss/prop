@@ -1,0 +1,125 @@
+{
+  "name": "Alpha Capital Group",
+  "official_url": "https://alphacapitalgroup.uk",
+  "proposed_status": "WATCHLIST",
+  "status_reason": "Ukraine allowed except sanctioned regions, but crypto payout only via Rise (CRYPTO_VIA_PROVIDER); most trading rules not collected.",
+  "jurisdiction": {
+    "prohibited_countries": [
+      "AF",
+      "BY",
+      "BI",
+      "CF",
+      "TD",
+      "CD",
+      "ER",
+      "IR",
+      "IQ",
+      "CU",
+      "KP",
+      "LY",
+      "MM",
+      "SO",
+      "SD",
+      "RU",
+      "SS",
+      "SY",
+      "YE",
+      "VE",
+      "VN",
+      "CG"
+    ],
+    "ukraine_citizens": "ALLOWED",
+    "ukraine_residents": "ALLOWED",
+    "restriction_basis": "both",
+    "notes": "Restricts nationals of, or residents in, listed countries. Sanctioned areas of Ukraine: Donetsk, Luhansk, Crimea, Kherson, Zaporizhzhia.",
+    "evidence": [
+      "s1"
+    ]
+  },
+  "kyc": {
+    "required_before": "unknown",
+    "documents": [],
+    "notes": "Not confirmed.",
+    "evidence": []
+  },
+  "payout": {
+    "classification": "CRYPTO_VIA_PROVIDER",
+    "methods": [
+      {
+        "rail": "rise",
+        "provider": "Rise (Riseworks)",
+        "currencies": [],
+        "networks": [],
+        "min_amount": null,
+        "max_amount": null,
+        "fee": null,
+        "processing_time": "within 2 business days",
+        "kyc_required": null,
+        "evidence": [
+          "s2"
+        ]
+      },
+      {
+        "rail": "bank",
+        "provider": "Wise / WIRE / ACH / SWIFT",
+        "currencies": [],
+        "networks": [],
+        "min_amount": null,
+        "max_amount": null,
+        "fee": null,
+        "processing_time": "within 2 business days",
+        "kyc_required": null,
+        "evidence": [
+          "s2"
+        ]
+      }
+    ],
+    "frequency": "bi-weekly or on-demand",
+    "profit_split_pct": 80,
+    "evidence": [
+      "s2"
+    ]
+  },
+  "platforms": [],
+  "automation": {
+    "ea_bots": "UNKNOWN",
+    "api_trading": "UNKNOWN",
+    "copy_trading": "UNKNOWN",
+    "vps_vpn": "UNKNOWN",
+    "hft": "UNKNOWN",
+    "conditions": "Prohibited strategies article not read.",
+    "evidence": []
+  },
+  "programs": [],
+  "sources": [
+    {
+      "id": "s1",
+      "url": "https://help.alphacapitalgroup.uk/en/articles/8775575-countries-with-limitations",
+      "title": "Countries with limitations",
+      "doc_type": "RESTRICTED_COUNTRIES",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "persons who are nationals of, or residents in ... Sanctioned areas of Ukraine: Donetsk, Luhansk, Crimea, Kherson, Zaporizhzhia"
+    },
+    {
+      "id": "s2",
+      "url": "https://help.alphacapitalgroup.uk/en/articles/6933755-how-do-i-get-paid-performance-fees",
+      "title": "How do I get paid Performance Fees?",
+      "doc_type": "PAYOUT_POLICY",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "We do not facilitate withdrawals directly through cryptocurrency due to its lack of regulatory oversight."
+    }
+  ],
+  "risk_signals": [],
+  "unknowns": [
+    "Challenge rules (targets, loss limits, days)",
+    "Platforms",
+    "EA/API/copy/VPN policy",
+    "KYC",
+    "Profit split 80% from search snippet only",
+    "Refund",
+    "Rise availability/terms for Ukrainian citizens"
+  ],
+  "slug": "alpha-capital-group",
+  "researched_at": "2026-09-29",
+  "conflicts": []
+}

@@ -1,0 +1,142 @@
+{
+  "name": "FundedNext",
+  "official_url": "https://fundednext.com",
+  "proposed_status": "INSUFFICIENT_DATA",
+  "status_reason": "Help center pages returned 403 on direct fetch; facts below come only from search-result snippets of official help pages. Ukraine absent from snippet restricted list but unconfirmed.",
+  "jurisdiction": {
+    "prohibited_countries": [
+      "BD",
+      "MM",
+      "BY",
+      "KP",
+      "SY",
+      "GD",
+      "TD",
+      "MY",
+      "BZ",
+      "AG",
+      "CV",
+      "TV",
+      "VN",
+      "BV",
+      "BI",
+      "CK",
+      "ER",
+      "KM",
+      "LK",
+      "FJ"
+    ],
+    "ukraine_citizens": "UNKNOWN",
+    "ukraine_residents": "UNKNOWN",
+    "restriction_basis": "both",
+    "notes": "Snippet: residents and citizens of listed countries cannot access. Ukraine not in snippet list; page not fetched directly so not confirmed. US users lack MT5 access.",
+    "evidence": [
+      "s1"
+    ]
+  },
+  "kyc": {
+    "required_before": "unknown",
+    "documents": [],
+    "notes": "Not confirmed.",
+    "evidence": []
+  },
+  "payout": {
+    "classification": "UNKNOWN",
+    "methods": [
+      {
+        "rail": "crypto_wallet",
+        "provider": null,
+        "currencies": [
+          "USDT",
+          "USDC"
+        ],
+        "networks": [
+          "ERC20",
+          "TRC20"
+        ],
+        "min_amount": null,
+        "max_amount": null,
+        "fee": "trader covers gateway charges",
+        "processing_time": "within 24 hours (claimed)",
+        "kyc_required": null,
+        "evidence": [
+          "s2"
+        ]
+      },
+      {
+        "rail": "rise",
+        "provider": "RiseWorks",
+        "currencies": [],
+        "networks": [],
+        "min_amount": null,
+        "max_amount": null,
+        "fee": "up to 3.5%",
+        "processing_time": null,
+        "kyc_required": null,
+        "evidence": [
+          "s2"
+        ]
+      }
+    ],
+    "frequency": "unknown",
+    "profit_split_pct": null,
+    "evidence": [
+      "s2"
+    ]
+  },
+  "platforms": [
+    "MT5"
+  ],
+  "automation": {
+    "ea_bots": "CONDITIONAL",
+    "api_trading": "UNKNOWN",
+    "copy_trading": "CONDITIONAL",
+    "vps_vpn": "UNKNOWN",
+    "hft": "UNKNOWN",
+    "conditions": "Snippet: EAs allowed on accounts below $50,000, not $50,000 and above; copy trading only between own accounts within limits, otherwise prohibited. Unverified snippet.",
+    "evidence": [
+      "s3"
+    ]
+  },
+  "programs": [],
+  "sources": [
+    {
+      "id": "s1",
+      "url": "https://help.fundednext.com/en/articles/8020080-are-any-countries-restricted-on-fundednext-cfds",
+      "title": "Are any countries restricted on FundedNext CFDs? (search-result snippet)",
+      "doc_type": "RESTRICTED_COUNTRIES",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "residents and citizens of Bangladesh, Myanmar, Belarus, North Korea, Syria, Grenada, Chad, Malaysia, Belize, Antigua and Barbuda, Cape Verde, Tuvalu, Vietnam ... are not able to access"
+    },
+    {
+      "id": "s2",
+      "url": "https://help.fundednext.com/en/articles/8020089-what-are-the-available-payment-methods",
+      "title": "Available Payment Methods (search-result snippet)",
+      "doc_type": "PAYOUT_POLICY",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "USDT (ERC20, TRC20), USDC (ERC20), Confirmo, RiseWorks, Bank Transfer"
+    },
+    {
+      "id": "s3",
+      "url": "https://help.fundednext.com/en/articles/8019805-what-is-the-copy-trading-rule-at-fundednext",
+      "title": "Copy Trading Rule (search-result snippet)",
+      "doc_type": "TRADING_RULES",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "copy trading between your own FundedNext Challenge Accounts ... total combined capital does not exceed $300,000"
+    }
+  ],
+  "risk_signals": [],
+  "unknowns": [
+    "All challenge rules",
+    "Direct vs provider (Confirmo/Rise) for USDT",
+    "Ukraine status",
+    "KYC",
+    "Profit split",
+    "Payout frequency",
+    "Refund",
+    "Direct page access blocked (403)"
+  ],
+  "slug": "fundednext",
+  "researched_at": "2026-09-29",
+  "conflicts": []
+}

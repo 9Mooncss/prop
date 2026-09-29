@@ -1,0 +1,175 @@
+{
+  "name": "HyroTrader",
+  "official_url": "https://www.hyrotrader.com",
+  "proposed_status": "WATCHLIST",
+  "status_reason": "Crypto prop on Bybit; no country list found on Hyro's site, but Bybit country restrictions may apply to live trading (Ukraine status on Bybit not checked). Payout rail (direct vs provider) and automation rules unconfirmed.",
+  "jurisdiction": {
+    "prohibited_countries": [],
+    "ukraine_citizens": "UNKNOWN",
+    "ukraine_residents": "UNKNOWN",
+    "restriction_basis": "unknown",
+    "notes": "FAQ page fetched contained no country list; search snippet says Hyro imposes no country restrictions but exchange (Bybit) terms apply. Bybit's list and Ukraine status not verified.",
+    "evidence": [
+      "s1"
+    ]
+  },
+  "kyc": {
+    "required_before": "funded",
+    "documents": [],
+    "notes": "Snippet: KYC via Hyro profile required to access funded account, then sign Trade Agreement.",
+    "evidence": [
+      "s3"
+    ]
+  },
+  "payout": {
+    "classification": "UNKNOWN",
+    "methods": [
+      {
+        "rail": "crypto_wallet",
+        "provider": null,
+        "currencies": [
+          "USDT",
+          "USDC"
+        ],
+        "networks": [],
+        "min_amount": 100,
+        "max_amount": null,
+        "fee": "no withdrawal commission (per snippet)",
+        "processing_time": "12-48 hours after invoice confirmation (per snippets)",
+        "kyc_required": true,
+        "evidence": [
+          "s3"
+        ]
+      }
+    ],
+    "frequency": "from 1 calendar day after first trade (per snippet)",
+    "profit_split_pct": 80,
+    "evidence": [
+      "s3"
+    ]
+  },
+  "platforms": [
+    "proprietary/Bybit-linked"
+  ],
+  "automation": {
+    "ea_bots": "UNKNOWN",
+    "api_trading": "UNKNOWN",
+    "copy_trading": "UNKNOWN",
+    "vps_vpn": "UNKNOWN",
+    "hft": "UNKNOWN",
+    "conditions": "Prohibited actions: martingale, cross-account hedging, low-cap altcoin limits, EUR/USDC pairs. Bot/API/VPN policy not found.",
+    "evidence": [
+      "s2"
+    ]
+  },
+  "programs": [
+    {
+      "slug": "two-step",
+      "name": "Two-Step Challenge",
+      "platforms": [],
+      "account_sizes": [],
+      "refund": "Challenge deposit refundable on completing requirements (per trading-rules page)",
+      "phases": [
+        {
+          "name": "phase1",
+          "rules": [
+            {
+              "type": "profit_target",
+              "params": {
+                "pct": 10
+              },
+              "text": "10% target in Challenge phase",
+              "evidence": [
+                "s2"
+              ]
+            },
+            {
+              "type": "daily_loss_limit",
+              "params": {
+                "pct": 4,
+                "basis": "unknown",
+                "includes_floating": null,
+                "reset_time": null,
+                "reset_tz": null
+              },
+              "text": "4% daily drawdown; reset timing not detailed",
+              "evidence": [
+                "s2"
+              ]
+            },
+            {
+              "type": "max_loss",
+              "params": {
+                "pct": 6,
+                "mode": "static",
+                "basis": "unknown"
+              },
+              "text": "6% overall maximum loss; appears static",
+              "evidence": [
+                "s2"
+              ]
+            },
+            {
+              "type": "min_trading_days",
+              "params": {
+                "days": 5
+              },
+              "text": "5 days minimum in Challenge",
+              "evidence": [
+                "s2"
+              ]
+            },
+            {
+              "type": "max_duration",
+              "params": {
+                "days": null
+              },
+              "text": "Unlimited",
+              "evidence": [
+                "s2"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "id": "s1",
+      "url": "https://www.hyrotrader.com/faqs/which-countries-are-allowed-to-join-hyrotrader-can-i-join-from-the-us-uk/",
+      "title": "Which countries are allowed to join HyroTrader?",
+      "doc_type": "RESTRICTED_COUNTRIES",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "The information on this site is not directed at residents in any country or jurisdiction where such distribution or use would be contrary to local laws or regulations."
+    },
+    {
+      "id": "s2",
+      "url": "https://www.hyrotrader.com/trading-rules/",
+      "title": "HyroTrader Trading Rules",
+      "doc_type": "TRADING_RULES",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "10% profit target; 4% daily drawdown; 6% max loss; 5 days minimum; unlimited time"
+    },
+    {
+      "id": "s3",
+      "url": "https://www.hyrotrader.com/faqs/how-can-i-withdraw-my-profits/",
+      "title": "How can I withdraw my profits? (search-result snippet)",
+      "doc_type": "PAYOUT_POLICY",
+      "retrieved_at": "2026-09-29T12:00:00Z",
+      "fragment": "You can receive your profits in USDT or USDC stablecoins ... at least $100 in profit after the split"
+    }
+  ],
+  "risk_signals": [],
+  "unknowns": [
+    "Bybit country restrictions vs Ukraine",
+    "Payout networks and direct-vs-provider",
+    "Daily loss basis/reset",
+    "Bot/API/copy/VPN policy",
+    "Terms and Conditions",
+    "Trading rules figures came via summarizer; withdrawal FAQ not fetched directly"
+  ],
+  "slug": "hyrotrader",
+  "researched_at": "2026-09-29",
+  "conflicts": []
+}
