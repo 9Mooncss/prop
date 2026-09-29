@@ -1,0 +1,35 @@
+{% extends "base.html" %}{% block body %}
+<div class="banner">Research + risk envelope tool. Nothing here is financial advice. The system never buys challenges, never pays, never signs transactions, and never bypasses KYC/geo/platform restrictions.</div>
+<div class="grid">
+ <div class="card"><h2>Profile (v{{ profile.version }})</h2>
+  <table><tr><th>Citizenship</th><td>{{ profile.citizenship }}</td></tr>
+  <tr><th>Residence</th><td>{{ profile.residence_country or '— not set —' }} {{ profile.residence_region or '' }}</td></tr>
+  <tr><th>Tax residency</th><td>{{ profile.tax_residency or '— not set —' }}</td></tr>
+  <tr><th>KYC documents</th><td>{{ profile.kyc_documents|length }} listed</td></tr>
+  <tr><th>IP location</th><td>{{ profile.ip_location_country or '— not set —' }}</td></tr>
+  <tr><th>Payout requirement</th><td>{{ profile.payout_requirement }}</td></tr></table>
+  <p class="small mut">Edit via <code>POST /api/profile</code> or <code>propguard profile set</code>.</p></div>
+ <div class="card"><h2>Rules freshness</h2><p>{{ fresh_count }} / {{ fresh_total }} critical rules verified within {{ settings.rules_max_age_h }}h.</p>
+  <p>Open conflicts: <b>{{ conflicts|length }}</b> · Pending changes: <b>{{ changes|length }}</b> · Open alerts: <b>{{ alerts|length }}</b></p></div>
+</div>
+<h2>Prop firms</h2><div class="card"><table>
+<tr><th>Firm</th><th>Status</th><th>Your eligibility</th><th>Crypto payout</th><th>Networks</th><th>API/EA</th><th>Last verified</th><th>Changes</th><th>Conflicts</th><th>Why not eligible / unknown</th></tr>
+{% for f in firms %}<tr><td><a href="/firms/{{ f.slug }}">{{ f.name }}</a></td>
+<td><span class="b {{ f.status }}">{{ f.status }}</span></td><td><span class="b {{ f.eligibility }}">{{ f.eligibility }}</span></td>
+<td><span class="b {{ f.payout }}">{{ f.payout }}</span></td><td class="small">{{ f.networks|join(', ') or '–' }}</td>
+<td class="small">{{ f.automation.api_trading or '?' }} / {{ f.automation.ea_bots or '?' }}</td>
+<td class="small">{{ f.last_checked or 'never (seed only)' }}</td><td>{{ f.pending_changes }}</td><td>{{ f.open_conflicts }}</td>
+<td class="small">{% for r in f.rejections[:4] %}{{ r }}<br>{% endfor %}</td></tr>{% endfor %}
+</table></div>
+<h2>Trading accounts</h2>
+<div class="grid">{% for a in accounts %}<div class="card"><h2><a href="/accounts/{{ a.id }}">{{ a.name }}</a> <span class="b">{{ a.mode }}</span></h2>
+<p class="small mut">{{ a.firm_slug }} / {{ a.program_slug }} / {{ a.phase }} · Kill switches: {% for k in a.kill %}<span class="b CRITICAL">{{ k }}</span> {% else %}<span class="b OK">none</span>{% endfor %}</p>
+{% if a.status %}{% for lv in a.status.limits %}{% set used = lv.used_frac_of_external|float %}{% set internal = 1 - lv.buffer_frac|float %}
+<div class="small">{{ lv.name }}: used {{ lv.used_frac_of_external|pct }} of external allowance · internal stop at {{ internal|pct }} · headroom {{ lv.internal_headroom }}</div>
+<div class="meter" role="img" aria-label="{{ lv.name }} used {{ lv.used_frac_of_external|pct }}"><span style="width:{{ [used*100,100]|min }}%"></span><i style="left:{{ internal*100 }}%"></i></div>
+{% endfor %}<p class="small">Balance {{ a.status.balance }} · Equity {{ a.status.equity }} · Positions {{ a.status.positions|length }} · Pending {{ a.status.pending_orders|length }}</p>
+{% else %}<p class="mut">no status yet</p>{% endif %}</div>{% else %}<p class="mut">No accounts. Run <code>propguard paper run</code> to create a PAPER account.</p>{% endfor %}</div>
+<div class="grid"><div class="card"><h2>Alerts</h2><table>{% for a in alerts %}<tr><td><span class="b {{ a.severity }}">{{ a.severity }}</span></td><td class="small">{{ a.created_at }}<br>{{ a.message }}</td></tr>{% else %}<tr><td class="mut">none</td></tr>{% endfor %}</table></div>
+<div class="card"><h2>Pending rule changes</h2><table>{% for c in changes %}<tr><td><span class="b {{ c.criticality }}">{{ c.criticality }}</span></td><td class="small">{{ c.rule_key }}<pre>{{ c.diff_fragment[:400] }}</pre></td></tr>{% else %}<tr><td class="mut">none</td></tr>{% endfor %}</table></div>
+<div class="card"><h2>Recommendations</h2><table>{% for r in recs %}<tr><td><a href="/recommendations/{{ r.id }}">#{{ r.id }}</a></td><td class="small">{{ r.created_at }} · profile v{{ r.profile_version }} · {{ r.results|length }} challenges</td></tr>{% else %}<tr><td class="mut">none yet — <code>propguard recommend</code></td></tr>{% endfor %}</table></div></div>
+{% endblock %}

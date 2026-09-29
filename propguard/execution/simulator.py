@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import itertools
 import random
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, replace
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 

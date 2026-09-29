@@ -532,7 +532,7 @@ class RiskEngine:
         tol = max(policy.balance_tolerance_abs, abs(snap.balance) * policy.balance_tolerance_frac)
         reported = [p.unrealized_pnl for p in snap.positions]
         if all(r is not None for r in reported):
-            implied = snap.balance + sum((r + p.swap + p.commission for r, p in zip(reported, snap.positions)), ZERO)
+            implied = snap.balance + sum((r + p.swap + p.commission for r, p in zip(reported, snap.positions, strict=False)), ZERO)
             if abs(implied - snap.equity) > tol:
                 out.append((Reason.BALANCE_INCONSISTENT,
                             f"equity {snap.equity} != balance + floating {implied} (tol {tol})"))

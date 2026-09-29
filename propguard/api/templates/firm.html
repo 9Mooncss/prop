@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% block body %}{% set f = d.firm %}
+<h1>{{ f.name }} <span class="b {{ f.status }}">{{ f.status }}</span> <span class="b {{ f.payout_classification }}">{{ f.payout_classification }}</span></h1>
+<p class="mut">{{ f.status_reason }}</p><p><a href="{{ f.official_url }}" rel="noopener noreferrer">{{ f.official_url }}</a> · researched {{ f.researched_at }}</p>
+<div class="grid"><div class="card"><h2>Your eligibility: <span class="b {{ d.eligibility.overall }}">{{ d.eligibility.overall }}</span></h2>
+<table>{% for c in d.eligibility.checks %}<tr><td>{{ c.name }}</td><td><span class="b {{ c.verdict }}">{{ c.verdict }}</span></td><td class="small">{{ c.explanation }}</td></tr>{% endfor %}</table></div>
+<div class="card"><h2>Payout</h2><pre>{{ f.payout|tojson(indent=1) }}</pre><h2>Jurisdiction</h2><pre>{{ f.jurisdiction|tojson(indent=1) }}</pre></div>
+<div class="card"><h2>Unknowns & risk signals</h2><ul>{% for u in f.unknowns %}<li>{{ u }}</li>{% endfor %}</ul>
+<p class="small mut">Community signals (not used for rules):</p><ul>{% for r in f.risk_signals %}<li class="small">{{ r.summary }}</li>{% endfor %}</ul></div></div>
+<h2>Programs</h2>{% for p in d.programs %}<div class="card"><b>{{ p.name }}</b> <span class="small mut">{{ p.platforms|join(', ') }} · phases {{ p.phases|join(' → ') }} · refund: {{ p.refund or 'unknown' }}</span>
+<div class="small">{% for c in p.challenges %}{{ c.account_size|int }} {{ c.currency }} for {{ c.price or '?' }}; {% endfor %}</div></div>{% endfor %}
+<h2>Rule registry</h2><div class="card"><table><tr><th>Rule</th><th>Status</th><th>Normalized</th><th>Source text</th><th>Evidence (provenance)</th><th>Verified</th></tr>
+{% for r in d.rules %}<tr><td class="small">{{ r.rule_key }}<br>v{{ r.version }} · {{ r.criticality }}</td><td><span class="b {{ r.interpretation_status }}">{{ r.interpretation_status }}</span><br><span class="small mut">conf {{ r.confidence }}</span></td>
+<td><pre>{{ r.params|tojson }}</pre>{% if r.interpretation_notes %}<div class="small mut">{{ r.interpretation_notes }}</div>{% endif %}</td><td class="small">{{ r.raw_text }}</td>
+<td class="small">{% for e in r.evidence %}<div><span class="b {{ e.status }}">{{ e.status }}</span> {{ e.doc_type }} <a href="{{ e.url }}" rel="noopener noreferrer">src</a><br><i>“{{ e.fragment[:220] }}”</i></div>{% endfor %}</td>
+<td class="small">{{ r.effective_verified_at or '—' }}<br>{{ r.verified_by or '' }}</td></tr>{% endfor %}</table></div>
+<h2>Conflicts</h2><div class="card">{% for c in d.conflicts %}<div><span class="b {{ 'CONFLICT' if c.status=='OPEN' else 'OK' }}">{{ c.status }}</span> {{ c.field }}: {{ c.values|join(' vs ') }} <span class="small mut">sources {{ c.source_refs|join(', ') }} {{ c.notes }}</span></div>{% else %}<span class="mut">none recorded</span>{% endfor %}</div>
+<h2>Sources</h2><div class="card"><table><tr><th>Type</th><th>URL</th><th>Last OK</th><th>Last changed</th><th>Failures</th></tr>{% for x in d.sources %}<tr><td>{{ x.doc_type }}</td><td class="small">{{ x.url }}</td><td class="small">{{ x.last_ok_at or '—' }}</td><td class="small">{{ x.last_changed_at or '—' }}</td><td>{{ x.consecutive_failures }} <span class="small mut">{{ x.last_error or '' }}</span></td></tr>{% endfor %}</table></div>
+{% endblock %}

@@ -124,7 +124,7 @@ def rule_compatibility(rep: ReplayResult | None, mc: MCResult | None) -> dict[st
                       f"(stress x{mc.stress_loss_multiplier}); p05 min headroom {mc.p05_min_headroom_frac:.0%}"))
     wsum = sum(p[2] for p in parts)
     score = sum(p[1] * p[2] for p in parts) / wsum
-    return {"score": round(score, 1), "components": [dict(zip(("name", "score", "weight", "explanation"), p))
+    return {"score": round(score, 1), "components": [dict(zip(("name", "score", "weight", "explanation"), p, strict=False))
                                                      for p in parts],
             "replay_outcome": rep.outcome, "violations": [asdict(v) for v in rep.violations[:50]],
             "approaches": [asdict(a) for a in rep.approaches], "assumptions": rep.assumptions,

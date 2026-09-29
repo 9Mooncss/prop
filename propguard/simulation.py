@@ -62,24 +62,26 @@ def _simulation_ruleset(rs: RuleSet, now: datetime, assume: bool) -> RuleSet:
 def run_simulated_challenge(rs: RuleSet, *, days: int = 20, seed: int = 1, bar_minutes: int = 15,
                             start: datetime | None = None, assume_rules_confirmed: bool = False,
                             policy: SafetyPolicy | None = None, stores: Stores | None = None,
-                            daily_vol: float = 0.006) -> SimReport:
+                            daily_vol: float = 0.006, account_id: str = "sim-acc",
+                            on_status=None, status_every: int = 16) -> SimReport:
     start = start or datetime(2026, 10, 5, 6, 0, tzinfo=timezone.utc)  # a Monday
     clock = SimClock(start)
     market = SimulatedMarket(clock, DEFAULT_INSTRUMENTS)
     rng = random.Random(seed)
     price = 1.1000
     market.set_price("EURUSD", f"{price:.5f}", spread="0.00010")
-    broker = SimulatedBroker("sim-acc", market, rs.initial_balance, SimConfig(seed=seed))
+    broker = SimulatedBroker(account_id, market, rs.initial_balance, SimConfig(seed=seed))
     stores = stores or Stores.memory()
 
     def rules() -> RuleSet:
         return _simulation_ruleset(rs, clock.now() - timedelta(minutes=1), assume_rules_confirmed)
 
-    session = AccountSession("sim-acc", broker, market, rules, stores, clock.now, policy=policy,
+    session = AccountSession(account_id, broker, market, rules, stores, clock.now, policy=policy,
                              news=lambda: NewsCalendar((), True))
     strat = DemoSMACrossover("EURUSD")
-    session.start()
+    first = session.start()
     report = SimReport(rs.ruleset_id, assume_rules_confirmed, days, 0, "0", "0", "NOT_COMPLETED")
+    report.kill_switches.extend(f"{start.isoformat()} {k}" for k in first.new_kill_switches)
     if assume_rules_confirmed:
         report.notes.append("SIMULATION ASSUMES UNVERIFIED RULES ARE CONFIRMED -- not valid for live decisions")
     report.notes.append("strategy: DemoSMACrossover (DEMONSTRATION ONLY, no claimed edge)")
@@ -114,10 +116,21 @@ def run_simulated_challenge(rs: RuleSet, *, days: int = 20, seed: int = 1, bar_m
                 report.external_breaches.append(f"{now.isoformat()} {lv.name}")
         for sig in strat.on_bar(now, market, snap):
             session.submit_signal(sig)
+        if on_status is not None and report.bars % status_every == 0:
+            on_status(session)
+    if on_status is not None:
+        on_status(session)
     decisions = Counter()
     audit = stores.audit
-    entries = getattr(audit, "entries", [])
-    for e in entries:
+    entries = getattr(audit, "entries", None)
+    if entries is None and hasattr(audit, "f"):  # SQL audit
+        from sqlalchemy import select
+        from propguard.db.models import AuditLog
+        from propguard.db.session import session_scope
+        with session_scope(audit.f) as s:
+            entries = [{"kind": r.kind, "payload": r.payload} for r in s.scalars(
+                select(AuditLog).where(AuditLog.account_id == account_id))]
+    for e in entries or []:
         if e["kind"] == "risk.decision":
             decisions[e["payload"]["decision"]["reasons"][0]] += 1
     snap = broker.get_snapshot()
@@ -125,7 +138,7 @@ def run_simulated_challenge(rs: RuleSet, *, days: int = 20, seed: int = 1, bar_m
     report.final_balance = f"{snap.balance:.2f}"
     report.final_equity = f"{snap.equity:.2f}"
     report.orders_sent = broker.submit_count
-    report.audit_entries = len(entries)
+    report.audit_entries = len(entries or [])
     report.min_internal_headroom = {k: f"{v:.2f}" for k, v in min_head.items()}
     if report.external_breaches:
         report.outcome = "FAILED"

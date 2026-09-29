@@ -101,7 +101,7 @@ class ChangeAnalyzer:
             return Analysis(p, hit.get("model"), hit.get("tier"), cached=True, valid_params=self._valid(p))
         a = self._call("cheap", user, ih)
         if a.proposal.ambiguous or a.proposal.confidence < 0.8 or not a.valid_params:
-            strong = self._call("strong", user, ih + ":strong")
+            strong = self._call("strong", user, hashlib.sha256((ih + ":strong").encode()).hexdigest())
             strong.cost_usd += a.cost_usd
             a = strong
         return a

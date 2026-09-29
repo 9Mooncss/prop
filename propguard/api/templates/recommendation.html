@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block body %}
+<h1>Recommendation #{{ r.id }}</h1><p class="mut">{{ r.created_at }} · profile v{{ r.profile_version }} · history {{ r.history_id or 'none' }} · {{ r.engine_version }} · inputs hash <code>{{ r.inputs.inputs_hash[:16] }}</code></p>
+<div class="banner">Scores are transparent heuristics; simulations are not guarantees of passing. You decide and purchase manually on the firm's own website — this system never pays.</div>
+{% for c in r.results %}<div class="card" style="margin-bottom:10px"><h2>{{ c.firm }} / {{ c.program }} · {{ c.account_size|int }} {% if c.price %}(${{ c.price }}){% endif %}
+{% if c.eligible %}<span class="b {{ 'CONDITIONAL' if c.conditional else 'PASS' }}">{{ 'CONDITIONAL' if c.conditional else 'ELIGIBLE' }}</span> <b>{{ c.total }}</b>{% else %}<span class="b FAIL">FILTERED OUT</span>{% endif %}</h2>
+<table><tr><th>Hard filter</th><th></th><th>Detail</th></tr>{% for h in c.hard_filters %}<tr><td>{{ h.name }}</td><td><span class="b {{ h.result }}">{{ h.result }}</span></td><td class="small">{{ h.explanation }}</td></tr>{% endfor %}</table>
+{% if c.eligible %}<table><tr><th>Component</th><th>Score</th><th>Weight</th><th>Why</th></tr>{% for x in c.components %}<tr><td>{{ x.name }}</td><td>{{ x.score }}</td><td>{{ x.weight }}</td><td class="small">{{ x.explanation }}</td></tr>{% endfor %}</table>{% endif %}
+{% if c.rule_compatibility %}<h2>Rule compatibility: {{ c.rule_compatibility.score }} (replay {{ c.rule_compatibility.replay_outcome }})</h2>
+<table>{% for v in c.rule_compatibility.violations[:10] %}<tr><td><span class="b FAIL">{{ v.rule }}</span></td><td class="small">{{ v.ts }} trade {{ v.trade_id }} · by {{ v.magnitude }} · {{ v.detail }}</td></tr>{% endfor %}
+{% for a in c.rule_compatibility.approaches %}<tr><td>{{ a.limit }}</td><td class="small">closest: {{ a.min_headroom }} ({{ a.min_headroom_frac|pct }} of allowance) at {{ a.at }}</td></tr>{% endfor %}</table>
+<p class="small mut">{{ c.rule_compatibility.assumptions|join(' · ') }}</p>{% if c.rule_compatibility.monte_carlo %}<p class="small mut">{{ c.rule_compatibility.monte_carlo.disclaimer }}</p>{% endif %}{% endif %}
+<details><summary class="small">Rules used (traceable)</summary><pre>{{ c.rules|tojson(indent=1) }}</pre></details></div>{% endfor %}
+{% endblock %}

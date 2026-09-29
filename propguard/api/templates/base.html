@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{% block title %}PropGuard{% endblock %}</title>
+<style>
+:root{--bg:#f7f7f5;--fg:#1d1d1b;--mut:#6b6b66;--card:#fff;--line:#e3e3de;--ok:#1f7a4d;--warn:#a86400;--bad:#b3261e;--acc:#2b5fb3}
+@media (prefers-color-scheme:dark){:root{--bg:#161615;--fg:#ececea;--mut:#9b9b95;--card:#1f1f1e;--line:#33332f;--ok:#4fbf86;--warn:#e0a13a;--bad:#ef6a60;--acc:#7aa7f0}}
+*{box-sizing:border-box}body{margin:0;font:14px/1.45 system-ui,-apple-system,Segoe UI,sans-serif;background:var(--bg);color:var(--fg)}
+header{display:flex;gap:16px;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--card);flex-wrap:wrap}
+header a{color:var(--fg);text-decoration:none;font-weight:600}header nav a{font-weight:400;margin-right:12px;color:var(--mut)}
+main{padding:16px;max-width:1400px;margin:auto}h1{font-size:20px;margin:4px 0 12px}h2{font-size:16px;margin:20px 0 8px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:5px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--mut);font-weight:500;font-size:12px}
+.b{display:inline-block;padding:1px 7px;border-radius:10px;font-size:12px;border:1px solid var(--line)}
+.VERIFIED,.ELIGIBLE,.PASS,.CONFIRMED,.DIRECT_CRYPTO,.ALLOW,.OK{color:var(--ok);border-color:var(--ok)}
+.WATCHLIST,.CONDITIONAL,.UNCERTAIN,.UNVERIFIED,.CRYPTO_VIA_PROVIDER,.WARNING,.HIGH,.PENDING{color:var(--warn);border-color:var(--warn)}
+.EXCLUDED,.INELIGIBLE,.FAIL,.CONFLICT,.CRITICAL,.DENY,.FIAT_ONLY{color:var(--bad);border-color:var(--bad)}
+.mut{color:var(--mut)}.small{font-size:12px}
+.meter{position:relative;height:14px;background:var(--line);border-radius:7px;overflow:hidden;margin:4px 0}
+.meter>span{position:absolute;left:0;top:0;bottom:0;background:var(--acc)}
+.meter>i{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--warn)}
+.banner{padding:8px 12px;border-radius:6px;margin-bottom:12px;border:1px solid var(--warn);color:var(--warn)}
+code,pre{font:12px ui-monospace,Menlo,monospace}pre{white-space:pre-wrap;max-height:260px;overflow:auto}
+</style></head><body>
+<header><a href="/">PropGuard</a><nav><a href="/">Dashboard</a><a href="/changes">Rule changes</a><a href="/api/docs">API</a></nav>
+<span class="b {{ 'OK' if settings is not defined or settings.execution_mode=='PAPER_ONLY' else 'CRITICAL' }}">{{ settings.execution_mode if settings is defined else 'PAPER_ONLY' }}</span></header>
+<main>{% block body %}{% endblock %}</main></body></html>

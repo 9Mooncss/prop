@@ -155,7 +155,13 @@ class LimitView:
     def to_dict(self) -> dict[str, Any]:
         d = asdict(self)
         d["used_frac_of_external"] = self.used_frac_of_external
-        return {k: (str(v) if isinstance(v, Decimal) else v) for k, v in d.items()}
+        fracs = {"buffer_frac", "used_frac_of_external"}
+
+        def fmt(k, v):
+            if not isinstance(v, Decimal):
+                return v
+            return str(v.quantize(Decimal("0.0001"))) if k in fracs else str(v.quantize(Decimal("0.01")))
+        return {k: fmt(k, v) for k, v in d.items()}
 
 
 class Action(StrEnum):

@@ -1,0 +1,4 @@
+{% extends "base.html" %}{% block body %}<h1>Rule Registry changes</h1><div class="card"><table><tr><th>#</th><th>When</th><th>Rule / source</th><th>Criticality</th><th>State</th><th>Old → New</th><th>Diff</th><th>Parser/model</th></tr>
+{% for c in rows %}<tr><td>{{ c.id }}</td><td class="small">{{ c.created_at }}</td><td class="small">{{ c.rule_key }}</td><td><span class="b {{ c.criticality }}">{{ c.criticality }}</span></td><td><span class="b {{ c.approval_state }}">{{ c.approval_state }}</span><br><span class="small">{{ c.decided_by or '' }}</span></td>
+<td><pre>{{ c.old_value|tojson }}
+→ {{ c.new_value|tojson }}</pre></td><td><pre>{{ c.diff_fragment[:600] }}</pre></td><td class="small">{{ c.parser_version }}<br>{{ c.model_version or '' }}<br>conf {{ c.confidence }}</td></tr>{% endfor %}</table></div>{% endblock %}

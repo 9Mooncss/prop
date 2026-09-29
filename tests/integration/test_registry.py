@@ -1,6 +1,5 @@
 import json
 from datetime import datetime, timedelta, timezone
-from decimal import Decimal as D
 from pathlib import Path
 
 import pytest
