@@ -170,6 +170,8 @@ class MarketDataProvider(Protocol):
 
     def volatility_ratio(self, symbol: str) -> Decimal: ...
 
+    def is_open(self, symbol: str) -> bool: ...
+
 
 @dataclass(frozen=True)
 class Signal:

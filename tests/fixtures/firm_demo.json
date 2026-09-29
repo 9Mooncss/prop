@@ -1,0 +1,45 @@
+{
+  "slug": "demo-firm",
+  "name": "Demo Firm (test fixture)",
+  "official_url": "https://demo-firm.test",
+  "proposed_status": "WATCHLIST",
+  "status_reason": "fixture",
+  "researched_at": "2026-09-29",
+  "jurisdiction": {"prohibited_countries": ["IR", "KP"], "ukraine_citizens": "ALLOWED", "ukraine_residents": "ALLOWED",
+                   "restriction_basis": "residence", "notes": "Ukraine allowed except Crimea and Donetsk", "evidence": ["s1"]},
+  "kyc": {"required_before": "payout", "documents": ["passport"], "evidence": ["s2"]},
+  "payout": {"classification": "DIRECT_CRYPTO", "methods": [{"rail": "crypto_wallet", "currencies": ["USDT"],
+             "networks": ["TRC20"], "evidence": ["s3"]}], "profit_split_pct": 80, "evidence": ["s3"]},
+  "platforms": ["MT5", "cTrader"],
+  "automation": {"ea_bots": "ALLOWED", "api_trading": "ALLOWED", "copy_trading": "PROHIBITED", "vps_vpn": "ALLOWED",
+                 "hft": "PROHIBITED", "conditions": "own strategies only", "evidence": ["s4"]},
+  "programs": [{
+    "slug": "two-step", "name": "Two-Step", "platforms": ["MT5", "cTrader"],
+    "account_sizes": [{"size": 100000, "price_usd": 500}, {"size": 50000, "price_usd": 300}],
+    "refund": "fee refunded with first payout",
+    "phases": [{"name": "phase1", "rules": [
+      {"type": "profit_target", "params": {"pct": 8}, "text": "Profit target 8%", "evidence": ["s5"]},
+      {"type": "daily_loss_limit", "params": {"pct": 5, "pct_of": "initial_balance", "reference": "day_start_balance",
+        "includes_floating": true, "reset_time": "00:00", "reset_tz": "Europe/Prague"},
+        "text": "Daily loss 5% of initial balance from start-of-day balance, equity-based, resets 00:00 CE(S)T", "evidence": ["s5"]},
+      {"type": "max_loss", "params": {"pct": 10, "mode": "static", "basis": "equity"}, "text": "Max loss 10%", "evidence": ["s5"]},
+      {"type": "min_trading_days", "params": {"days": 3}, "text": "3 days", "evidence": ["s5"]},
+      {"type": "max_duration", "params": {"days": null}, "text": "unlimited", "evidence": ["s5"]},
+      {"type": "news_trading", "params": {"allowed": "ALLOWED"}, "text": "news allowed", "evidence": ["s5"]},
+      {"type": "weekend_holding", "params": {"allowed": "PROHIBITED", "tz": "UTC"}, "text": "no weekend", "evidence": ["s5"]},
+      {"type": "overnight_holding", "params": {"allowed": "ALLOWED"}, "text": "overnight ok", "evidence": ["s5"]},
+      {"type": "weird_new_rule", "params": {"x": 1}, "text": "something new", "evidence": ["s5"]}
+    ]}]
+  }],
+  "sources": [
+    {"id": "s1", "url": "https://demo-firm.test/countries/", "title": "Countries", "doc_type": "RESTRICTED_COUNTRIES", "retrieved_at": "2026-09-29T10:00:00Z", "fragment": "Ukraine allowed except Crimea and Donetsk"},
+    {"id": "s2", "url": "https://demo-firm.test/kyc", "title": "KYC", "doc_type": "KYC_POLICY", "retrieved_at": "2026-09-29T10:00:00Z", "fragment": "Passport required before payout"},
+    {"id": "s3", "url": "https://demo-firm.test/payouts", "title": "Payouts", "doc_type": "PAYOUT_POLICY", "retrieved_at": "2026-09-29T10:00:00Z", "fragment": "Payouts in USDT TRC20 directly to your wallet"},
+    {"id": "s4", "url": "https://demo-firm.test/faq", "title": "FAQ", "doc_type": "FAQ", "retrieved_at": "2026-09-29T10:00:00Z", "fragment": "Expert advisors and API trading are allowed for your own strategies"},
+    {"id": "s5", "url": "https://demo-firm.test/rules", "title": "Trading Rules", "doc_type": "TRADING_RULES", "retrieved_at": "2026-09-29T10:00:00Z", "fragment": "Maximum daily loss is 5% of the initial balance"},
+    {"id": "s9", "url": "https://reddit.com/r/x", "title": "Reddit", "doc_type": "COMMUNITY", "retrieved_at": "2026-09-29T10:00:00Z", "fragment": "slow payouts?"}
+  ],
+  "conflicts": [],
+  "risk_signals": [{"source": "s9", "summary": "unverified slow payout reports"}],
+  "unknowns": ["refund details"]
+}

@@ -96,6 +96,7 @@ class RiskContext:
     automation_conditions_acknowledged: bool = False
     seen_client_order_ids: frozenset[str] = frozenset()
     challenge_active: bool = True
+    closed_markets: frozenset[str] = frozenset()  # symbols whose market session is closed
 
 
 class RiskEngine:
@@ -136,7 +137,8 @@ class RiskEngine:
                 Reason.UNKNOWN_POSITION: KillSwitchKind.UNEXPECTED_MANUAL_TRADE,
             }.get(reason, KillSwitchKind.ACCOUNT_STATE_INCONSISTENT)
             triggers.append(KillSwitchTrigger(kind, msg))
-        stale_syms = [p.symbol for p in snap.positions if self._quote_age(ctx, p.symbol) > policy.max_quote_age_s * 3]
+        stale_syms = [p.symbol for p in snap.positions if p.symbol not in ctx.closed_markets
+                      and self._quote_age(ctx, p.symbol) > policy.max_quote_age_s * 3]
         if stale_syms:
             triggers.append(KillSwitchTrigger(KillSwitchKind.STALE_MARKET_DATA,
                                               f"stale quotes for open positions: {sorted(set(stale_syms))}"))
@@ -258,6 +260,8 @@ class RiskEngine:
         quote = ctx.quotes.get(order.symbol)
         if spec is None:
             fail(Reason.UNKNOWN_INSTRUMENT, f"no instrument spec for {order.symbol}")
+        if order.symbol in ctx.closed_markets:
+            fail(Reason.MARKET_CLOSED, f"market for {order.symbol} is closed")
         if quote is None:
             fail(Reason.NO_QUOTE, f"no quote for {order.symbol}")
         elif quote.bid <= 0 or quote.ask <= 0 or quote.ask < quote.bid:

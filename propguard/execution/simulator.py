@@ -64,6 +64,13 @@ class SimulatedMarket:
         self._quotes: dict[str, Quote] = {}
         self._frozen: set[str] = set()
         self._vol: dict[str, Decimal] = {}
+        self._closed = False
+
+    def set_closed(self, closed: bool) -> None:
+        self._closed = closed
+
+    def is_open(self, symbol: str) -> bool:
+        return not self._closed and symbol in self._instruments
 
     def set_price(self, symbol: str, bid: Decimal | str, ask: Decimal | str | None = None,
                   spread: Decimal | str | None = None) -> Quote:

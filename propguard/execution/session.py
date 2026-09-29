@@ -174,6 +174,7 @@ class AccountSession:
             automation_conditions_acknowledged=self.ack,
             seen_client_order_ids=self.stores.orders.seen_ids(self.account_id),
             challenge_active=self.challenge_active(),
+            closed_markets=frozenset(s for s in symbols if not getattr(self.market, "is_open", lambda _s: True)(s)),
         )
 
     # ------------------------------------------------------------------ order entry points
@@ -245,6 +246,18 @@ class AccountSession:
         self.stores.audit.record("killswitch.clear", self.account_id, {"kind": kind.value, "actor": actor,
                                                                        "note": note, "ok": ok})
         return ok
+
+    def set_day_start_manual(self, balance: Decimal, equity: Decimal, actor: str, note: str) -> None:
+        """Owner-supplied start-of-day reference (e.g. read from the firm's own dashboard) when the
+        reset was missed and the platform cannot reconstruct it. Audited."""
+        st = self.stores.state.load(self.account_id)
+        if st is None:
+            raise ValueError("no state")
+        st.day_start_balance, st.day_start_equity, st.day_start_known = Decimal(balance), Decimal(equity), True
+        self.stores.state.save(st)
+        self.stores.audit.record("state.day_start_manual", self.account_id, {
+            "balance": str(balance), "equity": str(equity), "actor": actor, "note": note,
+            "trading_date": st.trading_date.isoformat() if st.trading_date else None})
 
     @property
     def snapshot(self) -> AccountSnapshot | None:
