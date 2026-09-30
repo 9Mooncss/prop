@@ -1,0 +1,29 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env: {POSTGRES_USER: propguard, POSTGRES_PASSWORD: propguard, POSTGRES_DB: propguard_test}
+        ports: ["5432:5432"]
+        options: --health-cmd "pg_isready -U propguard" --health-interval 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install -e ".[dev,postgres,llm]"
+      - run: ruff check propguard tests
+      - name: tests (SQLite)
+        run: python -m pytest -q
+      - name: tests (PostgreSQL)
+        env: {PROPGUARD_TEST_DATABASE_URL: "postgresql+psycopg://propguard:propguard@localhost:5432/propguard_test"}
+        run: python -m pytest -q
+      - name: risk acceptance suite
+        run: python -m pytest -q -m risk
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t propguard:ci .
