@@ -13,8 +13,12 @@
   by the recommender and trading on them is blocked until verification — by design.
 * The LLM path was tested with a fake client; a real Anthropic call was **not executed** (no API key in this
   environment).
-* Real prop-firm pages were not fetched by the automated test suite (mocked HTTP). The compose worker does
-  fetch them live; results depend on each site's anti-bot policy (blocked pages are reported, not bypassed).
+* Live monitoring run (2026-09-30, 23 seeded primary sources): 16 baselined, 9 research fragments found
+  verbatim in raw pages (→ SOURCE_MATCHED), 7 returned HTTP 403 (FundedNext, FundingPips, E8 help, Breakout)
+  and were recorded as BLOCKED, not bypassed. Several pages (e.g. some FTMO/HyroTrader FAQs) are
+  JavaScript-rendered and yield only a few hundred characters over plain HTTP; their evidence stays
+  UNVERIFIED (fail-safe). Headless-browser rendering for such pages is not implemented.
+* The automated test suite uses mocked HTTP for monitoring.
 * Intel Mac / Linux ARM64: image is multi-arch-compatible (pure Python, official multi-arch bases) but was only
   built and run on linux/amd64 here.
 * OS keychain storage for secrets: env/`.env` only today; `keyring` extra reserved.
