@@ -58,3 +58,11 @@ See `sources[]` in each `seed/firms/<slug>.json`. Primary domains: ftmo.com, the
 
 ## Access problems
 403: help.fundednext.com, fundednext.com/faq, fundingpips.com/trading-objectives, help.fundingpips.com, breakoutprop.com/program-rules, help.e8markets.com. 404 on several guessed URLs (the5ers help subdomain crypto page).
+
+## How the system uses this research
+Seed files are loaded as **UNVERIFIED** rules (confidence 0.6) with evidence rows (URL, doc type, fragment,
+hash, retrieval time). Rules whose extracted params were ambiguous (e.g. FTMO `max_loss.basis =
+"balance_or_equity_unconfirmed"`, `includes_floating = null`) are stored as **UNCERTAIN** with the raw values
+kept. The monitor captures raw baselines of every primary source and upgrades matching fragments to
+SOURCE_MATCHED; the owner then confirms each rule. Until then the Risk Engine blocks new risk for these firms
+and the recommender filters them out — the table above is a lead list, not a green light.
