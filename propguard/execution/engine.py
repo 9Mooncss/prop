@@ -107,7 +107,11 @@ class ExecutionEngine:
                 except Exception:  # noqa: BLE001 - connection errors end the retry loop below
                     pass
                 if self._adapter.is_connected():
-                    found = self._adapter.find_order(order.client_order_id)
+                    try:
+                        found = self._adapter.find_order(order.client_order_id)
+                    except (BrokerError, BrokerTimeout) as lexc:
+                        return self._resolve_timeout(order, d, f"lookup after reconnect failed: {lexc}",
+                                                     self.max_send_retries)
                     if found is not None:
                         return self._apply_report(order, d, found)
                     return self._evaluate_and_send(order, attempt + 1)  # fresh state, fresh approval
@@ -125,14 +129,18 @@ class ExecutionEngine:
         st.orders.update(order.client_order_id, status=OrderStatus.UNKNOWN.value, error=err)
         st.audit.record("order.timeout", self.account_id, {"client_order_id": order.client_order_id, "error": err})
         found = None
+        lookup_ok = False
         try:
             found = self._adapter.find_order(order.client_order_id)
-        except (BrokerError, BrokerTimeout):
-            found = None
+            lookup_ok = True
+        except (BrokerError, BrokerTimeout) as exc:
+            st.audit.record("order.lookup_failed", self.account_id, {"client_order_id": order.client_order_id,
+                                                                      "error": str(exc)})
         if found is not None:
             return self._apply_report(order, d, found)
         caps = self._adapter.capabilities
-        if caps.supports_client_order_id and attempt < self.max_send_retries:
+        # resend ONLY on a definitive negative lookup; a failed lookup is ambiguous -> never resend
+        if lookup_ok and caps.supports_client_order_id and attempt < self.max_send_retries:
             # platform confirms it does not know this client id -> safe to re-evaluate and resend
             return self._evaluate_and_send(order, attempt + 1)
         st.kill_switches.activate(self.account_id, KillSwitchKind.AMBIGUOUS_EXECUTION_EVENT,

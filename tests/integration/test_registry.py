@@ -109,13 +109,13 @@ def test_eligibility_separates_citizenship_residence_tax_kyc_ip(sf):
         f = firm_to_dict(s.scalar(select(Firm).where(Firm.slug == "demo-firm")))
     r = evaluate(Profile(), f)
     assert r.overall == Overall.UNKNOWN  # residence and IP not set -> never assumed
-    r = evaluate(Profile(residence_country="PL", ip_location_country="PL",
+    r = evaluate(Profile(residence_country="PL", tax_residency="PL", ip_location_country="PL",
                          kyc_documents=({"type": "passport", "country": "UA"},)), f)
     assert r.overall == Overall.ELIGIBLE, r.to_dict()
-    r = evaluate(Profile(residence_country="UA", ip_location_country="UA",
+    r = evaluate(Profile(residence_country="UA", tax_residency="UA", ip_location_country="UA",
                          kyc_documents=({"type": "passport", "country": "UA"},)), f)
     assert r.overall == Overall.CONDITIONAL  # region restriction -> must confirm region
-    r = evaluate(Profile(residence_country="UA", residence_region="Donetsk", ip_location_country="UA",
+    r = evaluate(Profile(residence_country="UA", residence_region="Donetsk", tax_residency="UA", ip_location_country="UA",
                          kyc_documents=({"type": "passport", "country": "UA"},)), f)
     assert r.overall == Overall.INELIGIBLE
     r = evaluate(Profile(residence_country="IR", ip_location_country="PL"), f)
@@ -123,11 +123,11 @@ def test_eligibility_separates_citizenship_residence_tax_kyc_ip(sf):
     r = evaluate(Profile(residence_country="PL", ip_location_country="IR"), f)
     assert r.overall == Overall.INELIGIBLE  # actual IP location restricted: reported, never circumvented
     f2 = {**f, "payout_classification": "CRYPTO_VIA_PROVIDER"}
-    r = evaluate(Profile(residence_country="PL", ip_location_country="PL",
+    r = evaluate(Profile(residence_country="PL", tax_residency="PL", ip_location_country="PL",
                          kyc_documents=({"type": "passport", "country": "UA"},)), f2)
     assert r.overall == Overall.INELIGIBLE and any(c.name == "crypto_payout" and c.verdict.value == "FAIL"
                                                    for c in r.checks)
-    r = evaluate(Profile(residence_country="PL", ip_location_country="PL", payout_requirement="ANY_CRYPTO",
+    r = evaluate(Profile(residence_country="PL", tax_residency="PL", ip_location_country="PL", payout_requirement="ANY_CRYPTO",
                          kyc_documents=({"type": "passport", "country": "UA"},)), f2)
     assert r.overall == Overall.ELIGIBLE
 

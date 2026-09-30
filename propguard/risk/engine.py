@@ -97,6 +97,8 @@ class RiskContext:
     seen_client_order_ids: frozenset[str] = frozenset()
     challenge_active: bool = True
     closed_markets: frozenset[str] = frozenset()  # symbols whose market session is closed
+    # this system's ledger: position_id -> (side, lots, symbol); used when no snapshot is available
+    known_positions: dict[str, tuple[str, Decimal, str]] = field(default_factory=dict)
 
 
 class RiskEngine:
@@ -331,7 +333,7 @@ class RiskEngine:
             if ml_rule.scope == "per_order":
                 max_lots_by["max_lot_size"] = ml_rule.max_lots
             else:
-                existing = sum((p.lots for p in snap.positions
+                existing = sum((p.lots for p in (*snap.positions, *snap.pending_orders)
                                 if ml_rule.scope == "total" or p.symbol == order.symbol), ZERO)
                 max_lots_by["max_lot_size"] = max(ZERO, ml_rule.max_lots - existing)
         lev, lev_rec = rs.get(Leverage)
@@ -379,13 +381,25 @@ class RiskEngine:
     def _evaluate_reducing(self, order: OrderRequest, ctx: RiskContext) -> RiskDecision:
         snap = ctx.snapshot
         if snap is None:
-            # without state we cannot prove the action reduces risk; still, the platform will reject
-            # a close for a non-existing position. Allow cancels/closes by id only.
-            if order.intent == OrderIntent.CANCEL or order.position_id:
+            # No fresh platform snapshot: only actions provably reducing *known* exposure are allowed --
+            # cancels by broker id, and closes/reductions of positions in this system's own ledger
+            # (opposite side, size <= last known size, same symbol).
+            if order.intent == OrderIntent.CANCEL and order.target_broker_order_id:
                 return self._decision(Action.ALLOW, order, ctx, [Reason.OK],
-                                      "risk-reducing action allowed without state (by id)", [], (),
+                                      "cancel by broker id allowed without snapshot", [], (),
                                       None, order.lots, None, ZERO, None, None)
-            return self._deny(order, ctx, [Reason.STATE_MISSING], "no state to validate risk reduction")
+            known = ctx.known_positions.get(order.position_id or "")
+            if known is None:
+                return self._deny(order, ctx, [Reason.STATE_MISSING],
+                                  "no snapshot and position not in ledger: cannot prove risk reduction")
+            k_side, k_lots, k_symbol = known
+            if (order.side.value != ("SELL" if k_side == "BUY" else "BUY") or order.symbol != k_symbol
+                    or order.lots <= 0 or order.lots > k_lots):
+                return self._deny(order, ctx, [Reason.NOT_RISK_REDUCING],
+                                  f"order does not reduce known position {order.position_id} ({k_side} {k_lots})")
+            return self._decision(Action.ALLOW, order, ctx, [Reason.OK],
+                                  "reduction of known ledger position allowed without snapshot", [], (),
+                                  None, order.lots, None, ZERO, None, None)
         if order.intent == OrderIntent.CANCEL:
             if not any(po.broker_order_id == order.target_broker_order_id for po in snap.pending_orders):
                 return self._deny(order, ctx, [Reason.ORDER_NOT_FOUND],

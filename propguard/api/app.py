@@ -70,9 +70,10 @@ def create_app(ctx: AppContext | None = None) -> FastAPI:
     def owner(request: Request) -> str:
         tok = ctx.settings.api_token
         if tok is None:
+            # proxy headers are ignored (uvicorn proxy_headers=False), so this is the TCP peer address
             host = request.client.host if request.client else ""
-            if host not in ("127.0.0.1", "::1", "localhost", "testclient"):
-                raise HTTPException(403, "set PROPGUARD_API_TOKEN to allow non-loopback mutations")
+            if host not in ("127.0.0.1", "::1", "testclient"):
+                raise HTTPException(403, "set PROPGUARD_API_TOKEN to allow non-loopback access")
             return "owner@loopback"
         given = request.headers.get("authorization", "").removeprefix("Bearer ").strip()
         if not given:
@@ -80,6 +81,22 @@ def create_app(ctx: AppContext | None = None) -> FastAPI:
         if not hmac.compare_digest(given.encode(), tok.get_secret_value().encode()):
             raise HTTPException(401, "owner token required")
         return "owner"
+
+    public = ("/health", "/metrics", "/ui/login", "/favicon.ico")
+
+    @app.middleware("http")
+    async def require_owner_for_reads(request: Request, call_next):
+        """All data (profile PII, audit, accounts, rules) is owner-only. With a token configured every
+        non-public path needs it; without a token only loopback clients are served at all."""
+        path = request.url.path
+        if not path.startswith(public):
+            try:
+                owner(request)
+            except HTTPException as exc:
+                if path.startswith("/api"):
+                    return JSONResponse({"detail": exc.detail}, status_code=exc.status_code)
+                return RedirectResponse("/ui/login", status_code=303)
+        return await call_next(request)
 
     # ------------------------------------------------------------------ health / metrics
     @app.get("/health")
@@ -336,6 +353,15 @@ def create_app(ctx: AppContext | None = None) -> FastAPI:
     def page_changes(request: Request, s: Session = Depends(db)):
         rows = list(s.scalars(select(RuleChange).order_by(RuleChange.id.desc()).limit(100)))
         return TEMPLATES.TemplateResponse(request, "changes.html", {"rows": rows})
+
+    @app.get("/ui/login", response_class=HTMLResponse)
+    def ui_login_form():
+        return HTMLResponse(
+            "<!doctype html><meta name=viewport content='width=device-width'><title>PropGuard login</title>"
+            "<form method=post action=/ui/login style='font:16px system-ui;max-width:360px;margin:15vh auto'>"
+            "<h1>PropGuard</h1><p>Owner token (PROPGUARD_API_TOKEN):</p>"
+            "<input name=token type=password autocomplete=current-password style='width:100%;padding:8px'>"
+            "<p><button type=submit>Sign in</button></p></form>")
 
     @app.post("/ui/login")
     def ui_login(token: str = Form(...)):

@@ -59,9 +59,12 @@ def snapshot(balance="100000", equity=None, positions=(), pending=(), ts=None, s
                            positions=tuple(positions), pending_orders=tuple(pending), sequence=seq)
 
 
-def ctx(rs=None, snap=None, state=None, quotes=None, **kw):
+_UNSET = object()
+
+
+def ctx(rs=None, snap=_UNSET, state=None, quotes=None, **kw):
     rs = rs or ruleset()
-    snap = snap or snapshot()
+    snap = snapshot() if snap is _UNSET else snap
     now = kw.get("now", NOW)
     if state is None:
         state = new_state("acc1", rs, snapshot(ts=now - timedelta(hours=2), seq=0))

@@ -29,6 +29,10 @@ class AppContext:
         for secret in (st.api_token, st.anthropic_api_key, st.webhook_url, st.telegram_bot_token):
             if secret is not None:
                 register_secret(secret.get_secret_value())
+        import os
+        from urllib.parse import urlsplit
+        register_secret(os.environ.get("POSTGRES_PASSWORD"))
+        register_secret(urlsplit(st.database_url).password)
         return cls(st)
 
     @cached_property

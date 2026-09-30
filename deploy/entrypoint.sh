@@ -2,6 +2,9 @@
 set -eu
 case "${1:-api}" in
   api)
+    if [ -z "${PROPGUARD_API_TOKEN:-}" ]; then
+      echo "PROPGUARD_API_TOKEN must be set (the container is not a loopback client)" >&2; exit 64
+    fi
     propguard db upgrade
     if [ "${PROPGUARD_SEED_ON_START:-true}" = "true" ]; then propguard seed load --dir /app/seed/firms >/dev/null; fi
     exec propguard serve --host 0.0.0.0 --port 8000 ;;

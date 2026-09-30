@@ -12,6 +12,8 @@ from propguard.db.stores import SessionAudit, SqlAudit
 from propguard.registry import service as reg
 
 pytestmark = pytest.mark.integration
+AUTH = {"Authorization": "Bearer tok-abcdef"}
+NOAUTH = {"Authorization": ""}
 FIX = Path(__file__).resolve().parents[1] / "fixtures" / "firm_demo.json"
 SAMPLE = Path(__file__).resolve().parents[2] / "examples" / "sample_trades.csv"
 
@@ -24,10 +26,9 @@ def client(db_url, tmp_path):
     with session_scope(ctx.sf) as s:
         reg.load_seed(s, json.loads(FIX.read_text()), SessionAudit(s))
     from propguard.api.app import create_app
-    return TestClient(create_app(ctx)), ctx
+    return TestClient(create_app(ctx), headers=AUTH), ctx
 
 
-AUTH = {"Authorization": "Bearer tok-abcdef"}
 
 
 def test_health_metrics_pages(client):
@@ -41,7 +42,7 @@ def test_health_metrics_pages(client):
 
 def test_mutations_require_token(client):
     c, _ = client
-    assert c.post("/api/profile", json={"residence_country": "PL"}).status_code == 401
+    assert c.post("/api/profile", json={"residence_country": "PL"}, headers=NOAUTH).status_code == 401
     assert c.post("/api/profile", json={"residence_country": "PL"}, headers=AUTH).json()["version"] == 2
     assert c.post("/api/profile", json={"residence_country": "Poland"}, headers=AUTH).status_code == 400
     assert c.post("/api/profile", json={"payout_requirement": "WHATEVER"}, headers=AUTH).status_code == 400
@@ -55,7 +56,7 @@ def test_profile_versions_and_default_citizenship(client):
 
 def test_history_upload_recommendation_traceable(client):
     c, _ = client
-    c.post("/api/profile", json={"residence_country": "PL", "ip_location_country": "PL",
+    c.post("/api/profile", json={"residence_country": "PL", "tax_residency": "PL", "ip_location_country": "PL",
                                  "kyc_documents": [{"type": "passport", "country": "UA"}]}, headers=AUTH)
     r = c.post("/api/histories", files={"file": ("t.csv", SAMPLE.read_bytes(), "text/csv")},
                data={"account_size": "100000"}, headers=AUTH)
@@ -89,7 +90,7 @@ def test_rule_verify_via_api_and_wallet_confirmation(client):
     c, _ = client
     d = c.get("/api/firms/demo-firm").json()
     rid = next(r["id"] for r in d["rules"] if r["kind"] == "daily_loss_limit")
-    assert c.post(f"/api/rules/{rid}/verify", json={"note": "checked"}).status_code == 401
+    assert c.post(f"/api/rules/{rid}/verify", json={"note": "checked"}, headers=NOAUTH).status_code == 401
     v = c.post(f"/api/rules/{rid}/verify", json={"note": "checked"}, headers=AUTH).json()
     assert v["status"] == "CONFIRMED"
     bad = c.post(f"/api/rules/{rid}/verify", json={"params": {"pct": 500}}, headers=AUTH)
@@ -107,3 +108,15 @@ def test_no_live_or_payment_endpoints(client):
     c, _ = client
     paths = {r.path for r in c.app.routes}
     assert not any(k in p for p in paths for k in ("live", "pay", "purchase", "sign", "withdraw"))
+
+
+def test_reads_require_token_when_configured(client):
+    c, _ = client
+    for u in ("/api/profile", "/api/audit", "/api/accounts", "/api/wallets", "/api/firms"):
+        assert c.get(u, headers=NOAUTH).status_code == 401, u
+    r = c.get("/", headers=NOAUTH, follow_redirects=False)
+    assert r.status_code == 303 and r.headers["location"] == "/ui/login"
+    assert c.get("/health", headers=NOAUTH).status_code == 200
+    assert c.get("/ui/login", headers=NOAUTH).status_code == 200
+    login = c.post("/ui/login", data={"token": "tok-abcdef"}, headers=NOAUTH, follow_redirects=False)
+    assert login.cookies.get("pg_token")

@@ -18,7 +18,7 @@ _PATTERNS = [
     # 12/24-word mnemonic-like sequences of lowercase words
     (re.compile(r"\b(?:[a-z]{3,8}\s+){11,23}[a-z]{3,8}\b"), "***possible-seed-phrase***"),
     (re.compile(r"\b(?:0x)?[a-fA-F0-9]{64}\b"), "***hex-secret***"),
-    (re.compile(r"(https?://)[^/\s:@]+:[^/\s@]+@"), r"\1***:***@"),
+    (re.compile(r"(\b[a-z][a-z0-9+.\-]*://)[^/\s:@]+:[^/\s@]+@", re.I), r"\1***:***@"),
 ]
 
 _extra_secrets: set[str] = set()

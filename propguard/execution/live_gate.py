@@ -34,8 +34,8 @@ def code_fingerprint() -> str:
     root = Path(__file__).resolve().parent.parent
     h = hashlib.sha256()
     for sub in ("risk", "execution", "rules"):
-        for p in sorted((root / sub).glob("*.py")):
-            h.update(p.name.encode())
+        for p in sorted((root / sub).rglob("*.py")):
+            h.update(p.relative_to(root).as_posix().encode())
             h.update(p.read_bytes())
     return h.hexdigest()[:24]
 

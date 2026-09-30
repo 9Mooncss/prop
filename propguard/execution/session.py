@@ -11,7 +11,7 @@ Strategies only receive ``submit_signal``; they never see the adapter.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime
 from decimal import Decimal
 from typing import Callable
@@ -174,11 +174,16 @@ class AccountSession:
             automation_conditions_acknowledged=self.ack,
             seen_client_order_ids=self.stores.orders.seen_ids(self.account_id),
             challenge_active=self.challenge_active(),
+            known_positions={pid: (d.get("side", ""), Decimal(d.get("lots", "0")), d.get("symbol", ""))
+                             for pid, d in self.stores.ledger.positions(self.account_id).items()},
             closed_markets=frozenset(s for s in symbols if not getattr(self.market, "is_open", lambda _s: True)(s)),
         )
 
     # ------------------------------------------------------------------ order entry points
     def submit(self, order: OrderRequest) -> ExecutionOutcome:
+        # `emergency` may only be set by the deterministic supervisor (required_actions -> executor)
+        if order.emergency:
+            order = replace(order, emergency=False)
         out = self.executor.execute(order)
         if out.status in (OrderStatus.FILLED, OrderStatus.PARTIALLY_FILLED) and order.intent == OrderIntent.OPEN:
             st = self.stores.state.load(self.account_id)
@@ -283,9 +288,13 @@ class AccountSession:
                     state = record_closed_pnl(state, ev.ts, ev.pnl, rs)
                     self.stores.state.save(state)
             elif ev.kind in ("fill", "partial_fill") and ev.position_id and ev.client_order_id:
-                if self.stores.orders.get(ev.client_order_id) is not None:
+                rec = self.stores.orders.get(ev.client_order_id)
+                if rec is not None:
+                    prev = self.stores.ledger.positions(self.account_id).get(ev.position_id, {})
+                    req = rec.get("request") or {}
                     self.stores.ledger.upsert_position(self.account_id, ev.position_id, {
-                        "lots": str(ev.lots), "client_order_id": ev.client_order_id})
+                        **prev, "lots": str(ev.lots), "client_order_id": ev.client_order_id,
+                        "side": prev.get("side") or req.get("side"), "symbol": prev.get("symbol") or req.get("symbol")})
             self.stores.audit.record("broker.event", self.account_id, {
                 "event_id": ev.event_id, "seq": ev.sequence, "kind": ev.kind, "position_id": ev.position_id,
                 "client_order_id": ev.client_order_id, "lots": str(ev.lots),

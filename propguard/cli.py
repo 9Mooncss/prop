@@ -231,7 +231,8 @@ def cmd_serve(args) -> None:
     import uvicorn
     ctx = _ctx()
     uvicorn.run("propguard.api.app:create_app", factory=True, host=args.host or ctx.settings.bind_host,
-                port=args.port or ctx.settings.bind_port, log_config=None)
+                port=args.port or ctx.settings.bind_port, log_config=None, proxy_headers=False,
+                server_header=False)
 
 
 def cmd_worker(args) -> None:

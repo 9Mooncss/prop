@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from decimal import Decimal
 
 from propguard.execution.interfaces import BrokerAdapter, OrderStatus
 from propguard.execution.stores import LedgerStore, OrderStore
@@ -43,8 +44,13 @@ class ReconciliationService:
                                              "client_order_id": p.client_order_id})
                 res.healed.append(f"adopted {p.position_id} from own order {p.client_order_id}")
             elif ledger[p.position_id].get("lots") not in (None, str(p.lots)):
-                self.ledger.upsert_position(account_id, p.position_id, {**ledger[p.position_id], "lots": str(p.lots)})
-                res.healed.append(f"lots of {p.position_id} updated to {p.lots}")
+                known = Decimal(ledger[p.position_id]["lots"])
+                if p.lots > known:  # exposure grew without our order: never trust it
+                    res.issues.append((KillSwitchKind.UNEXPECTED_MANUAL_TRADE,
+                                       f"position {p.position_id} grew from {known} to {p.lots} lots outside the system"))
+                else:  # partial close / stop-out: shrinking exposure is safe to adopt
+                    self.ledger.upsert_position(account_id, p.position_id, {**ledger[p.position_id], "lots": str(p.lots)})
+                    res.healed.append(f"lots of {p.position_id} reduced to {p.lots}")
         for pid in ledger:
             if pid not in broker_ids:
                 res.issues.append((KillSwitchKind.RECONCILIATION_MISMATCH,

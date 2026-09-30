@@ -122,7 +122,7 @@ def evaluate(profile: Profile, firm: dict[str, Any]) -> EligibilityResult:
     # tax residency (separate entity; firms rarely restrict on it -- only fail on explicit list match)
     tax = (profile.tax_residency or "").upper() or None
     if tax is None:
-        checks.append(Check("tax_residency", Verdict.PASS, "tax residency not set (informational only)"))
+        checks.append(Check("tax_residency", Verdict.UNKNOWN, "set tax residency in profile (never assumed)"))
     elif tax in prohibited and basis in ("both", "unknown"):
         checks.append(Check("tax_residency", Verdict.CONDITIONAL,
                             f"tax residency {tax} appears on prohibited list; confirm with firm", ev))
@@ -138,9 +138,7 @@ def evaluate(profile: Profile, firm: dict[str, Any]) -> EligibilityResult:
         checks.append(Check("kyc_documents", Verdict.FAIL,
                             f"KYC document issuing country {sorted(doc_countries & prohibited)} is prohibited"))
     elif not req_docs:
-        checks.append(Check("kyc_documents", Verdict.UNKNOWN if not kyc else Verdict.PASS,
-                            "firm KYC document requirements not confirmed" if not kyc.get("documents")
-                            else "no specific documents listed"))
+        checks.append(Check("kyc_documents", Verdict.UNKNOWN, "firm KYC document requirements not confirmed"))
     elif not profile.kyc_documents:
         checks.append(Check("kyc_documents", Verdict.CONDITIONAL,
                             f"firm requires {sorted(req_docs)}; add your available KYC documents to profile"))

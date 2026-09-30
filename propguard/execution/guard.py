@@ -29,7 +29,7 @@ from propguard.risk.models import OrderRequest
 from propguard.risk.policy import Action, RiskDecision
 
 _KEY = secrets.token_bytes(32)
-_CONSUMED: set[str] = set()
+_CONSUMED: dict[str, float] = {}  # signature -> expiry (pruned after expiry; expired tokens fail anyway)
 _LOCK = threading.Lock()
 APPROVAL_TTL_S = 5.0
 
@@ -81,7 +81,10 @@ def verify_and_consume(approved: object, *, adapter_name: str) -> OrderRequest:
     with _LOCK:
         if approved.signature in _CONSUMED:
             raise BypassAttempt("approval already used (duplicate submission)")
-        _CONSUMED.add(approved.signature)
+        now = time.time()
+        for sig in [k for k, exp in _CONSUMED.items() if exp < now]:
+            del _CONSUMED[sig]
+        _CONSUMED[approved.signature] = approved.expires_at
     return approved.order
 
 
