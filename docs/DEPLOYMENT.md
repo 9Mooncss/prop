@@ -22,6 +22,16 @@ disable with `PROPGUARD_SEED_ON_START=false`). The worker waits for migrations, 
 
 Behind a TLS-intercepting corporate proxy pass its CA bundle as a build secret (not stored in the image):
 `DOCKER_BUILDKIT=1 docker build --secret id=extra_ca,src=/path/ca.crt -t propguard:local .` then `docker compose up -d`.
+At runtime the worker's HTTPS fetches must trust the same CA: mount it and point OpenSSL at it, e.g. in a
+`docker-compose.override.yml`:
+
+```yaml
+services:
+  worker:
+    volumes: ["/path/ca.crt:/etc/ssl/certs/extra-ca.crt:ro"]
+    environment: {SSL_CERT_FILE: /etc/ssl/certs/extra-ca.crt, HTTPS_PROXY: "http://proxy:3128"}
+```
+Without it every source is recorded as a fetch ERROR (rules then go stale and block new risk — fail closed).
 
 Verified in this repository's CI-like environment: build, `docker compose up -d`, all three services healthy,
 migrations at head on PostgreSQL 16, seeds loaded, `/health` OK, token never in container logs.

@@ -14,7 +14,7 @@
 | T10 | Replay, Monte Carlo, scoring, recommendations | orchestrator | done |
 | T11 | API, dashboard, CLI, worker | orchestrator | done |
 | T12 | Docker Compose deployment verified | orchestrator | done |
-| T13 | Independent security / risk review | reviewer subagent (Fable tier) | see CHANGELOG |
+| T13 | Independent security / risk review | reviewer subagent (Fable tier) | done: 8 findings (2 HIGH) fixed + regression tests |
 | T14 | Live adapter (cTrader Open API first) | — | open, blocked on U2/U6 |
 | T15 | News calendar provider | — | open |
 | T16 | Persistent paper-trading daemon in worker | — | open |

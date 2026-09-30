@@ -14,6 +14,12 @@
 * Recommender: hard filters, weighted breakdown, trade-history replay, Monte Carlo, persisted traceable records.
 * FastAPI API + dashboard, CLI, worker, Alembic migrations, Docker Compose (verified healthy on PostgreSQL 16).
 * Research seed for 8 firms (none VERIFIED; E8 Markets EXCLUDED for Ukraine).
+* Independent security/risk review (most capable model tier) — all findings fixed with regression tests:
+  HIGH resend after a failed order lookup (could triple-execute); HIGH state-less REDUCE accepted any size;
+  MEDIUM reconciliation trusted size increases; read endpoints exposed PII without token; loopback fallback
+  vs proxy headers; eligibility passed unset tax residency / unconfirmed KYC; LOW redaction of DB URLs,
+  live-gate fingerprint scope, unbounded consumed-approval set, max-lot total ignored pending orders;
+  `emergency` flag settable by callers.
 * Fixes found by testing: day-state from previous trading day not detected; weekend day-start loss; stale-quote
   kill switch while market closed; UA header lost with injected client; audit write deadlock on SQLite;
   cache-key length overflow on PostgreSQL.

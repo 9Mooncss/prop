@@ -97,7 +97,6 @@ class AccountSession:
         return self.tick(protective=False)
 
     def tick(self, protective: bool = True) -> TickResult:
-        self.clock()
         rs = self.rules()
         res = TickResult(None, None)
         if not self._adapter.is_connected():
